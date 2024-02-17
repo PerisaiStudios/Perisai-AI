@@ -1,31 +1,33 @@
 {
-  "name": "biosyn-bot",
+  "name": "perisai-ai",
   "version": "1.0.0",
   "description": "A special bot for BioSyn Universe Discord server.",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon src/index.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/InGen-Universe/biosyn-bot.git"
+    "url": "git+https://github.com/PerisaiStudios/Perisai-AI.git"
   },
   "keywords": [
-    "BioSyn",
-    "BioSyn",
-    "Bot",
-    "biosyn",
-    "biosyn-bot"
+    "bot"
   ],
-  "author": "enlight_hawk",
+  "author": "PerisaiStudios",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/InGen-Universe/biosyn-bot/issues"
+    "url": "https://github.com/PerisaiStudios/Perisai-AI/issues"
   },
-  "homepage": "https://github.com/InGen-Universe/biosyn-bot#readme",
+  "homepage": "https://github.com/PerisaiStudios/Perisai-AI#readme",
   "dependencies": {
-    "axios": "^1.2.1",
-    "discord.js": "^14.7.1",
-    "mongodb": "^4.12.1"
+    "axios": "^1.6.7",
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.4.4",
+    "express": "^4.18.2",
+    "mongoose": "^8.1.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
   }
 }

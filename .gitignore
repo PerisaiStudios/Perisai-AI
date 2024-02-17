@@ -96,6 +96,9 @@ dist
 # FuseBox cache
 .fusebox/
 
+# Environment variables
+*.env
+
 # DynamoDB Local files
 .dynamodb/
 
