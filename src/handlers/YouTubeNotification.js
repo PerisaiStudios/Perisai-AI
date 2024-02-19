@@ -23,4 +23,4 @@ function checkVideo({ youtubeChannel, guildID, channelID, message }) {
 }
 
 // Exports
-module.exports = checkVideo
+module.exports = checkVideo;

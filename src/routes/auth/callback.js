@@ -1,8 +1,8 @@
 const express = require(`express`);
-const client = require(`../../client`);
+const { DiscordClient: client } = require(`../../client`);
 const axios = require("axios").default;
 const router = express.Router();
-const TokenModel = require(`../../models/tokens`);
+const Token = require(`../../models/tokens`);
 
 router.get(`/`, async (req, res) => {
     const { code } = req.query;
@@ -42,8 +42,12 @@ router.get(`/`, async (req, res) => {
         return;
     };
 
-    res.status(201).json(userInfo.data);
-    console.log(token.data);
+    const tokens = new Token({ access_token, expires_in, refresh_token });
+
+    await tokens.save()
+        .then(() => {
+           res.status(201).send(`Authorized.`); 
+        });
 });
 
 module.exports = router;
