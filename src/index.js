@@ -5,12 +5,13 @@ const dotenv = require(`dotenv`);
 const express = require(`express`);
 const fs = require(`fs`);
 const mongoose = require(`mongoose`);
+const twitter = require(`twitter-api-v2`);
 
 // Initialization
 dotenv.config();
 
 // Discord
-const client = require(`./client`);
+const { DiscordClient: client } = require(`./client`);
 const rest = new Discord.REST().setToken(process.env.DC_TOKEN);
 
 client.commands = new Discord.Collection();
