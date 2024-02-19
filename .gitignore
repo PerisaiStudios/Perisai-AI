@@ -99,6 +99,9 @@ dist
 # Environment variables
 *.env
 
+## Test Directory
+tests/
+
 # DynamoDB Local files
 .dynamodb/
 

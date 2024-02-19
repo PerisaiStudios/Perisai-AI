@@ -6,7 +6,7 @@ const router = express.Router();
 
 // Main
 router.get(`/`, (req, res) => {
-    res.send(`Hello World!`)
+    res.send(`Hello World!`);
 });
 
 // Exports

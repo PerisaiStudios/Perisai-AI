@@ -34,7 +34,7 @@ router.get(`/`, async (req, res) => {
     const { access_token, expires_in, refresh_token } = token.data;
     const userInfo = await axios.get(
         `https://discord.com/api/v10/users/@me`,
-        { headers: { "Authorization": `Bearer ${access_token}` } }
+        { headers: { Authorization: `Bearer ${access_token}` } }
     );
 
     if (!userInfo) {
@@ -42,12 +42,8 @@ router.get(`/`, async (req, res) => {
         return;
     };
 
-    const Tokens = new TokenModel({ access_token, expires_in, refresh_token });
-
-    await Tokens.save();
-
-    res.sendStatus(201);
-    console.log(token.data, userInfo.data);
+    res.status(201).json(userInfo.data);
+    console.log(token.data);
 });
 
 module.exports = router;
