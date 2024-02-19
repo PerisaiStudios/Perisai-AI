@@ -1,7 +1,7 @@
 <h1 align="center">
-  <b>BioSyn Bot</b>
+  <b>Perisai AI</b>
 </h1>
-BioSyn Universe's special bot repository
+Perisai Universe's special bot repository
 
 # Releases
 -

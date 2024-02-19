@@ -12,6 +12,7 @@ dotenv.config();
 
 // Discord
 const { DiscordClient: client } = require(`./client`);
+const checkVideo = require(`./handlers/YouTubeNotification.js`);
 const rest = new Discord.REST().setToken(process.env.DC_TOKEN);
 
 client.commands = new Discord.Collection();
@@ -31,6 +32,13 @@ client.on(`ready`, async () => {
     // const commandData = await rest.put(Discord.Routes.applicationCommands(client.user.id), { body: commands });
 
     // console.log(`Successfully loaded ${commandData.length} application (/) commands.`);
+
+    checkVideo({
+        youtubeChannel: process.env.YT_CHANNEL_ID,
+        guildID: process.env.YT_GUILD_ID,
+        channelID: process.env.YT_POST_CHANNEL_ID,
+        message: `@everyone\nA new video had just been uploaded. Check it out!\n{{VIDEO_URL}}`
+    });
 });
 
 // Express
