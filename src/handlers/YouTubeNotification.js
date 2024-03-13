@@ -1,24 +1,28 @@
 // Imports
-const { DiscordClient: client } = require(`../client.js`);
+const { WebhookClient } = require(`discord.js`);
 const YTNotifier = require(`../utils/YouTubeNotifier.js`);
 
 // Main
-function checkVideo({ youtubeChannel, guildID, channelID, message }) {
+const client = new WebhookClient({ url: process.env.YT_HOOK_URL });
+
+// Main
+function checkVideo({ youtubeChannel, message }) {
     const notifier = new YTNotifier(youtubeChannel);
-    const guild = client.guilds.cache.get(guildID);
-    const channel = guild.channels.cache.get(channelID);
 
     notifier.on(`videoAdded`, async video => {
-        const { feed, latestVideo } = video;
+        const { channel_name, channel_link, checked_video: latestVideo } = video;
         const params = message
             ?.replace(`{{VIDEO_URL}}`, latestVideo.link)
             ?.replace(`{{VIDEO_TITLE}}`, latestVideo.title)
-            ?.replace(`{{CHANNEL_URL}}`, feed.link)
-            ?.replace(`{{CHANNEL_TITLE}}`, feed.title)
+            ?.replace(`{{CHANNEL_URL}}`, channel_link)
+            ?.replace(`{{CHANNEL_NAME}}`, channel_name)
             ||
-            `Video uploaded by ${feed.title}\n${latestVideo.link}`;
+            `Video uploaded by ${channel_name}\n${latestVideo.link}`;
 
-        await channel.send(params);
+        await client.send({
+            username: channel_name,
+            avatarURL: 
+        })
     });
 }
 

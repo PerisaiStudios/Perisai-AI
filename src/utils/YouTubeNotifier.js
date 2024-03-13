@@ -7,55 +7,82 @@ const parser = new Parser();
 
 // Main
 class YouTubeNotifier {
-    constructor(youtube_channel, interval = 10000) {
+    constructor(channel_id, interval = 10000) {
         Reflect.set(this, `events`, { videoAdded: [] });
 
-        const url = `https://www.youtube.com/feeds/videos.xml?channel_id=${youtube_channel}`;
-
-        (async () => {
+        const url = `https://www.youtube.com/feeds/videos.xml?channel_id=${channel_id}`;
+        
+        async function checkVideo(self) {
             const feed = await parser.parseURL(url);
 
-            if (!feed || !feed.items.length) return;
+            if (!feed || feed.items.length) return;
 
-            const data = await Notification.findOne({ youtube_channel }) || new Notification({
-                youtube_channel,
+            const { link: channel_link, title: channel_name } = feed;
+            const data = await Notification.findOne({ channel_id }) || new Notification({
+                channel_name,
+                channel_link,
+                channel_id,
                 last_checked: new Date()
             });
-
             const latestVideo = feed.items[0];
             const latestVideoID = latestVideo.id.split(`:`)[2];
             latestVideo.link = `https://youtu.be/${latestVideoID}`;
 
-            data.checked_video = {
-                id: latestVideo.id,
-                published_date: latestVideo.pubDate
+            if (
+                (!data?.checked_video || latestVideo.id !== data?.checked_video.id) &&
+                ( new Date(latestVideo.pubDate) > new Date(data.checked_video.pubDate) )
+            ) {
+                data.checked_video = latestVideo;
+
+                await data.save().then(() => self.emit(`videoAdded`, data));
             };
+        };
 
-            await data.save()
-                .then(() => this.emit(`videoAdded`, { feed, latestVideo }));
+        // (async () => {
+        //     const feed = await parser.parseURL(url);
 
-            async function checkVideo(self) {
-                const feed = await parser.parseURL(url);
+        //     if (!feed || !feed.items.length) return;
 
-                if (!feed || !feed.items.length) return;
+        //     const { link: channel_link, title: channel_name } = feed;
 
-                const latestVideo = feed.items[0];
-                const latestVideoID = latestVideo.id.split(`:`)[2];
-                latestVideo.link = `https://youtu.be/${latestVideoID}`;
+        //     const data = await Notification.findOne({ channel_id }) || new Notification({
+        //         channel_id,
+        //         channel_link,
+        //         channel_name,
+        //         last_checked: new Date()
+        //     });
 
-                if ((!data.checked_video || latestVideo.id !== data.checked_video.id) && (new Date(latestVideo.pubDate) > new Date(data.checked_video.published_date))) {
-                    data.checked_video = {
-                        id: latestVideo.id,
-                        published_date: latestVideo.pubDate
-                    };
+        //     const latestVideo = feed.items[0];
+        //     const latestVideoID = latestVideo.id.split(`:`)[2];
+        //     latestVideo.link = `https://youtu.be/${latestVideoID}`;
 
-                    await data.save()
-                        .then(() => self.emit(`videoAdded`, { feed, latestVideo }));
-                };
-            };
+        //     data.checked_video = latestVideo;
 
-            setInterval(checkVideo, interval, this);
-        })();
+        //     await data.save()
+        //         .then(() => this.emit(`videoAdded`, { feed, latestVideo }));
+
+        //     async function checkVideo(self) {
+        //         const feed = await parser.parseURL(url);
+
+        //         if (!feed || !feed.items.length) return;
+
+        //         const latestVideo = feed.items[0];
+        //         const latestVideoID = latestVideo.id.split(`:`)[2];
+        //         latestVideo.link = `https://youtu.be/${latestVideoID}`;
+
+        //         if ((!data.checked_video || latestVideo.id !== data.checked_video.id) && (new Date(latestVideo.pubDate) > new Date(data.checked_video.published_date))) {
+        //             data.checked_video = {
+        //                 id: latestVideo.id,
+        //                 published_date: latestVideo.pubDate
+        //             };
+
+        //             await data.save()
+        //                 .then(() => self.emit(`videoAdded`, { feed, latestVideo }));
+        //         };
+        //     };
+
+        //     setInterval(checkVideo, interval, this);
+        // })();
     };
 
     on(event, listener) {
