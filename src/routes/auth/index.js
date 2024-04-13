@@ -1,15 +1,15 @@
 // Imports
-const callbackRoute = require(`./callback`);
 const express = require(`express`);
+const callback = require(`./callback.js`);
 
 // Initialization
 const router = express.Router();
+const authURL = process.env.DISCORD_AUTH_URL;
+router.use(`/callback`, callback);
 
 // Main
-router.use(`/callback`, callbackRoute);
-
 router.get(`/`, (req, res) => {
-    res.redirect(process.env.DC_AUTH_URL);
+  return res.redirect(authURL);
 });
 
 // Exports

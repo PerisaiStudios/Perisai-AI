@@ -3,8 +3,6 @@ const mongoose = require(`mongoose`);
 
 // Main
 const schema = new mongoose.Schema({
-    channel_name: String,
-    channel_link: String,
     channel_id: String,
     latest_video: {
         title: String,
