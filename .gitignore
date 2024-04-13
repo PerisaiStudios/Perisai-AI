@@ -93,6 +93,9 @@ dist
 # Serverless directories
 .serverless/
 
+# Lock Files
+*-lock.json
+
 # FuseBox cache
 .fusebox/
 
