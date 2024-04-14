@@ -1,5 +1,7 @@
 // Imports
 const express = require(`express`);
+const AccessTokens = require(`../../models/AccessTokens.js`);
+const AuthenticatedUsers = require(`../../models/AuthenticatedUsers.js`);
 const axios = require(`axios`).default;
 const client = require(`../../client.js`);
 
@@ -16,6 +18,7 @@ client.on(`ready`, () => {
 // Main
 router.get(`/`, async (req, res) => {
   const { code } = req.query;
+  const { sessionID } = req.cookies;
   
   if (!code) return res.status(400).json({ error: `Auth Code Required.` });
 
@@ -27,24 +30,31 @@ router.get(`/`, async (req, res) => {
     }
   });
 
-  if (tokenReq.status === 400) return res.status(tokenReq.status).json(tokenReq.data);
+  if (tokenReq.status >= 400) return res.status(tokenReq.status).json(tokenReq.data);
 
-  console.log(tokenReq.data);
+  const { access_token, token_type, expires_in, refresh_token, scope } = tokenReq.data;
+  const tokenDoc = await AccessTokens.findOne({ sessionID }) || new AccessTokens({ sessionID });
+  tokenDoc.accessToken = access_token;
+  tokenDoc.tokenType = token_type;
+  tokenDoc.scope = scope;
 
-  const { access_token, expires_in, refresh_token } = tokenReq.data;
-
-  res.cookie(`access_token`, access_token);
-  res.cookie(`created_at`, Date.now());
-  res.cookie(`expires_in`, expires_in);
-  res.cookie(`refresh_token`, refresh_token);
+  await tokenDoc.save();
 
   const user = await axios.get(`https://discord.com/api/v10/users/@me`, {
     headers: {
       Authorization: `Bearer ${access_token}`
     }
   });
+  console.log(user.data);
+  const userDoc = await AuthenticatedUsers.findOne({ sessionID }) || new AuthenticatedUsers({ sessionID });
 
-  return res.status(201).json(user.data);
+  for (const i in user.data) {
+    userDoc[i] = user.data[i];
+  };
+
+  await userDoc.save();
+
+  return res.status(201).redirect(`../`);
 });
 
 // Exports
